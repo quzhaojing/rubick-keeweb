@@ -82,7 +82,7 @@
 
 | ID | 需求 | 说明 |
 |----|------|------|
-| F-001 | 关键词匹配 | `features.cmds` 包含：`keeweb`、`KeeWeb`、`密码管理`、`kdbx`（可配置） |
+| F-001 | 关键词匹配 | `features.cmds` 仅包含：`keeweb` |
 | F-002 | UI 插件类型 | `pluginType: "ui"`，`main: "index.html"` |
 | F-003 | Panel 尺寸 | 进入插件后调用 `rubick.setExpendHeight()` 展开至接近全屏（建议 ≥ 720px，可读取屏幕高度动态设置） |
 | F-004 | 生命周期 | 在 `onPluginReady` / `onPluginEnter` 中初始化 KeeWeb；`onPluginOut` 时按 KeeWeb 策略处理锁定/清理 |
@@ -226,7 +226,7 @@ rubick-keeweb/
     {
       "code": "keeweb",
       "explain": "打开 KeeWeb 密码管理器",
-      "cmds": ["keeweb", "KeeWeb", "密码管理", "kdbx"]
+      "cmds": ["keeweb"]
     }
   ]
 }

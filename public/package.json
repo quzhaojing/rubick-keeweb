@@ -13,22 +13,7 @@
     {
       "code": "keeweb",
       "explain": "打开 KeeWeb 密码管理器",
-      "cmds": [
-        "keeweb",
-        "KeeWeb",
-        "密码管理",
-        "kdbx",
-        {
-          "type": "files",
-          "fileType": "kdbx",
-          "label": "用 KeeWeb 打开"
-        },
-        {
-          "type": "files",
-          "fileType": "kdb",
-          "label": "用 KeeWeb 打开"
-        }
-      ]
+      "cmds": ["keeweb"]
     }
   ]
 }

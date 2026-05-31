@@ -4,8 +4,7 @@
 
 ## 功能
 
-- 输入 `keeweb`、`KeeWeb`、`密码管理`、`kdbx` 打开 Panel
-- 拖入或选中 `.kdbx` / `.kdb` 文件时可直接用 KeeWeb 打开
+- 输入 `keeweb` 打开 Panel
 - Panel 内嵌 KeeWeb 官方 gh-pages 静态资源，UI 与操作保持一致
 - 支持 KeeWeb 内置的本地文件、云同步、搜索、密码生成等 Web 版能力
 
