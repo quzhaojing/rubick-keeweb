@@ -1,0 +1,34 @@
+{
+  "name": "rubick-keeweb",
+  "pluginName": "KeeWeb 密码管理",
+  "description": "在 Rubick 中使用 KeeWeb 管理 KeePass kdbx 密码库，界面与 KeeWeb 官方一致",
+  "author": "rubick-keeweb",
+  "main": "index.html",
+  "logo": "https://keeweb.info/img/logo.png",
+  "version": "1.0.0",
+  "preload": "preload.js",
+  "homePage": "https://github.com/rubick-keeweb/rubick-keeweb/blob/main/README.md",
+  "pluginType": "ui",
+  "features": [
+    {
+      "code": "keeweb",
+      "explain": "打开 KeeWeb 密码管理器",
+      "cmds": [
+        "keeweb",
+        "KeeWeb",
+        "密码管理",
+        "kdbx",
+        {
+          "type": "files",
+          "fileType": "kdbx",
+          "label": "用 KeeWeb 打开"
+        },
+        {
+          "type": "files",
+          "fileType": "kdb",
+          "label": "用 KeeWeb 打开"
+        }
+      ]
+    }
+  ]
+}
