@@ -14,8 +14,19 @@ const RUBICK_PLUGINS = path.join(
   'rubick',
   'rubick-plugins-new'
 );
-const LINKED = path.join(RUBICK_PLUGINS, 'node_modules', 'rubick-keeweb');
+const INSTALLED = path.join(RUBICK_PLUGINS, 'node_modules', 'rubick-keeweb');
 const LOCAL_JSON = path.join(RUBICK_PLUGINS, 'rubick-local-plugin.json');
+
+function isSourceLink(dir) {
+  if (!fs.existsSync(dir)) return false;
+  try {
+    const stat = fs.lstatSync(dir);
+    if (stat.isSymbolicLink()) return true;
+    return fs.realpathSync(dir) === fs.realpathSync(PUBLIC);
+  } catch {
+    return false;
+  }
+}
 
 const checks = [
   ['public/package.json', fs.existsSync(path.join(PUBLIC, 'package.json'))],
@@ -23,8 +34,13 @@ const checks = [
   ['public/preload.js', fs.existsSync(path.join(PUBLIC, 'preload.js'))],
   ['KeeWeb index.html', fs.existsSync(path.join(PUBLIC, 'keeweb', 'index.html'))],
   ['Rubick plugins dir', fs.existsSync(RUBICK_PLUGINS)],
-  ['npm link target', fs.existsSync(LINKED)],
-  ['linked KeeWeb assets', fs.existsSync(path.join(LINKED, 'keeweb', 'index.html'))],
+  ['installed plugin dir', fs.existsSync(INSTALLED)],
+  ['installed preload.js', fs.existsSync(path.join(INSTALLED, 'preload.js'))],
+  ['installed KeeWeb assets', fs.existsSync(path.join(INSTALLED, 'keeweb', 'index.html'))],
+  [
+    'not linked to source',
+    fs.existsSync(INSTALLED) && !isSourceLink(INSTALLED)
+  ],
   [
     'rubick-local-plugin.json entry',
     fs.existsSync(LOCAL_JSON) &&
@@ -39,7 +55,7 @@ for (const [name, ok] of checks) {
 }
 
 if (failed) {
-  console.log('\nSome checks failed. Run: npm run link');
+  console.log('\nSome checks failed. Run: npm run install:rubick');
   process.exitCode = 1;
 } else {
   console.log('\nPlugin install looks good. In Rubick, type: keeweb');

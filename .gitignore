@@ -1,4 +1,6 @@
 .cache/
 node_modules/
 .tmp-rubick-asar/
+dist/
+rubick-keeweb-*.tgz
 public/keeweb/

@@ -6,8 +6,7 @@
   "scripts": {
     "setup": "node scripts/download-keeweb.mjs",
     "postinstall": "node scripts/download-keeweb.mjs",
-    "link": "node scripts/install-rubick.mjs",
-    "link:rubick": "node scripts/install-rubick.mjs",
+    "pack": "node scripts/pack.mjs",
     "install:rubick": "node scripts/install-rubick.mjs",
     "verify": "node scripts/verify-install.mjs"
   },

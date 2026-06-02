@@ -12,7 +12,6 @@ const RUBICK_PLUGINS = path.join(
   'rubick-plugins-new'
 );
 const LOCAL_JSON = path.join(RUBICK_PLUGINS, 'rubick-local-plugin.json');
-const LINKED = path.join(RUBICK_PLUGINS, 'node_modules', 'rubick-keeweb');
 
 function runNodeScript(scriptPath) {
   const result = spawnSync(process.execPath, [scriptPath], { stdio: 'inherit' });
@@ -43,64 +42,76 @@ function syncLocalPluginEntry(publicPkg) {
   fs.writeFileSync(LOCAL_JSON, `${JSON.stringify(plugins, null, 2)}\n`, 'utf8');
 }
 
-function linkPluginDirectory() {
-  fs.mkdirSync(path.join(RUBICK_PLUGINS, 'node_modules'), { recursive: true });
-
-  if (fs.existsSync(LINKED)) {
-    const stat = fs.lstatSync(LINKED);
-    if (stat.isSymbolicLink() || stat.isDirectory()) {
-      fs.rmSync(LINKED, { recursive: true, force: true });
-    } else {
-      fs.unlinkSync(LINKED);
-    }
+function removeLegacyCopy(name) {
+  const legacy = path.join(RUBICK_PLUGINS, name);
+  if (fs.existsSync(legacy)) {
+    fs.rmSync(legacy, { recursive: true, force: true });
   }
-
-  const linkType = process.platform === 'win32' ? 'junction' : 'dir';
-  fs.symlinkSync(PUBLIC, LINKED, linkType);
 }
 
-function assertLinkedPlugin() {
-  const required = ['package.json', 'index.html', 'preload.js', path.join('keeweb', 'index.html')];
-
-  if (!fs.existsSync(LINKED)) {
-    throw new Error(`Linked plugin directory not found: ${LINKED}`);
+function installPackage(tgzPath, manifest) {
+  if (!fs.existsSync(RUBICK_PLUGINS)) {
+    throw new Error(`Rubick plugins directory not found: ${RUBICK_PLUGINS}`);
   }
 
-  let target = LINKED;
-  try {
-    target = fs.realpathSync(LINKED);
-  } catch {
-    // Keep symlink path when realpath fails.
+  removeLegacyCopy(manifest.name);
+
+  const installedPath = path.join(RUBICK_PLUGINS, 'node_modules', manifest.name);
+  if (fs.existsSync(installedPath)) {
+    fs.rmSync(installedPath, { recursive: true, force: true });
+  }
+
+  const tgzArg = tgzPath.replace(/\\/g, '/');
+  const result = spawnSync(
+    'npm',
+    ['install', tgzArg, '--no-fund', '--no-audit'],
+    { cwd: RUBICK_PLUGINS, stdio: 'inherit', shell: true }
+  );
+  if (result.status !== 0) {
+    throw new Error('npm install failed');
+  }
+
+  return installedPath;
+}
+
+function assertInstalledPlugin(installedPath) {
+  const required = ['package.json', 'index.html', 'preload.js', path.join('keeweb', 'index.html')];
+
+  if (!fs.existsSync(installedPath)) {
+    throw new Error(`Installed plugin directory not found: ${installedPath}`);
   }
 
   for (const rel of required) {
-    const filePath = path.join(LINKED, rel);
+    const filePath = path.join(installedPath, rel);
     if (!fs.existsSync(filePath)) {
-      throw new Error(`Missing linked plugin file: ${filePath} (target: ${target})`);
+      throw new Error(`Missing installed plugin file: ${filePath}`);
     }
   }
 }
 
-async function main() {
+function main() {
   if (!fs.existsSync(path.join(PUBLIC, 'preload.js'))) {
     throw new Error('public/preload.js not found');
   }
 
-  console.log('[rubick-keeweb] Downloading KeeWeb assets if needed...');
-  runNodeScript(path.join(ROOT, 'scripts', 'download-keeweb.mjs'));
-
-  console.log('[rubick-keeweb] Linking plugin into Rubick...');
-  linkPluginDirectory();
+  console.log('[rubick-keeweb] Packing plugin...');
+  runNodeScript(path.join(ROOT, 'scripts', 'pack.mjs'));
 
   const publicPkg = readPublicPackage();
+  const tgzPath = path.join(ROOT, `rubick-keeweb-${publicPkg.version}.tgz`);
+  if (!fs.existsSync(tgzPath)) {
+    throw new Error(`Package not found: ${tgzPath}`);
+  }
+
+  console.log('[rubick-keeweb] Installing to Rubick...');
+  const installedPath = installPackage(tgzPath, publicPkg);
+  assertInstalledPlugin(installedPath);
+
   console.log('[rubick-keeweb] Syncing rubick-local-plugin.json...');
   syncLocalPluginEntry(publicPkg);
-  assertLinkedPlugin();
 
-  console.log('[rubick-keeweb] Installed. Restart Rubick and type: keeweb');
+  console.log('[rubick-keeweb] Installed:', installedPath);
+  console.log('[rubick-keeweb] Restart Rubick and type: keeweb');
 }
 
-main().catch((error) => {
-  console.error('[rubick-keeweb]', error.message);
-  process.exitCode = 1;
-});
+main();

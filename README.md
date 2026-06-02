@@ -23,11 +23,10 @@ cd rubick-keeweb
 # 2. 下载 KeeWeb 静态资源（约 2MB+）
 npm run setup
 
-# 3. 安装/更新插件到 Rubick（npm link + 同步本地插件配置）
+# 3. 打包并安装到 Rubick（复制到 node_modules，不关联源码目录）
 npm run install:rubick
 
-# 4. 若首次安装，还可在 Rubick 插件市场 → 开发者 → 安装本地插件，选择 public 目录
-# 5. 重启 Rubick，输入 keeweb 使用
+# 4. 重启 Rubick，输入 keeweb 使用
 ```
 
 ## 目录结构
