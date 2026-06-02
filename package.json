@@ -6,8 +6,9 @@
   "scripts": {
     "setup": "node scripts/download-keeweb.mjs",
     "postinstall": "node scripts/download-keeweb.mjs",
-    "link": "npm link --prefix public",
-    "link:rubick": "npm link --prefix public && npm link rubick-keeweb --prefix \"%APPDATA%\\rubick\\rubick-plugins-new\"",
+    "link": "node scripts/install-rubick.mjs",
+    "link:rubick": "node scripts/install-rubick.mjs",
+    "install:rubick": "node scripts/install-rubick.mjs",
     "verify": "node scripts/verify-install.mjs"
   },
   "engines": {
