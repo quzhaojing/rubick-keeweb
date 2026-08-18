@@ -3,17 +3,17 @@
  * Run: node scripts/verify-install.mjs
  */
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
-const RUBICK_PLUGINS = path.join(
-  process.env.APPDATA || '',
-  'rubick',
-  'rubick-plugins-new'
-);
+const RUBICK_USER_DATA = process.platform === 'darwin'
+  ? path.join(os.homedir(), 'Library', 'Application Support', 'rubick')
+  : path.join(process.env.APPDATA || os.homedir(), 'rubick');
+const RUBICK_PLUGINS = path.join(RUBICK_USER_DATA, 'rubick-plugins-new');
 const INSTALLED = path.join(RUBICK_PLUGINS, 'node_modules', 'rubick-keeweb');
 const LOCAL_JSON = path.join(RUBICK_PLUGINS, 'rubick-local-plugin.json');
 

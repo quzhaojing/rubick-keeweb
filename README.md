@@ -12,6 +12,7 @@
 
 - [Rubick](https://rubick.vip/) 已安装
 - Node.js ≥ 18
+- Windows 10/11 或 macOS（Apple Silicon / Intel）
 
 ## 安装与调试
 

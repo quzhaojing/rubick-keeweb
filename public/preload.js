@@ -1,4 +1,5 @@
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 function getPluginDir() {
@@ -133,9 +134,12 @@ window.isKeeWebInstalled = function isKeeWebInstalled() {
     if (window.__rubickKeeWebElectronShimInstalled) return;
     if (typeof window.require !== 'function') return;
 
+    const fallbackUserData = process.platform === 'darwin'
+      ? path.join(os.homedir(), 'Library', 'Application Support', 'rubick')
+      : path.join(process.env.APPDATA || os.homedir(), 'rubick');
     const userData =
       (window.rubick && window.rubick.getPath && window.rubick.getPath('userData')) ||
-      path.join(process.env.APPDATA || '', 'rubick');
+      fallbackUserData;
     const configDir = path.join(userData, 'rubick-keeweb');
 
     const keewebApp = {
